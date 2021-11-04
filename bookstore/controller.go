@@ -1,0 +1,101 @@
+package bookstore
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/menachem554/Bookstore/entity"
+	pb "github.com/menachem554/Bookstore/proto"
+)
+
+// CreateBook : To create the new book
+func CreateBook(c *gin.Context) {
+	// Get the request as json
+	book := entity.PostBook{}
+	err := c.ShouldBindJSON(&book)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	// Convert to grpc
+	book1 := &pb.Book{
+		BookID:   book.BookID,
+		BookName: book.BookName,
+		Title:    book.Title,
+		Author:   book.Author,
+	}
+
+	// Send the request to grpc server
+	res, err := C.PostBook(context.Background(), &pb.PostBookReq{Book: book1})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// ReadBook : To read the book of the given  iD
+func GetBook(c *gin.Context) {
+	bookId := c.Param("id")
+	req := &pb.GetBookReq{Id: bookId}
+
+	res, err := C.GetBook(c, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// UpdateBook : To Update the book of the given ID
+func UpdateBook(c *gin.Context) {
+	bookId := c.Param("id")
+	book := entity.PostBook{}
+
+	err := c.ShouldBindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	book1 := &pb.Book{
+		BookID:   bookId,
+		BookName: book.BookName,
+		Title:    book.Title,
+		Author:   book.Author,
+	}
+
+	res, err := C.UpdateBook(context.Background(), &pb.UpdateBookReq{Book: book1})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	result := res.GetBook()
+
+	c.JSON(http.StatusOK, result)
+}
+
+// DeleteBook: To Delete the book of the given ID
+func DeleteBook(c *gin.Context) {
+	bookId := c.Param("id")
+
+	req := &pb.DeleteBookReq{Id: bookId}
+
+	res, err := C.DeleteBook(c, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Success": fmt.Sprint(res.Success),
+	})
+}
