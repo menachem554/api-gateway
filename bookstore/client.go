@@ -46,7 +46,7 @@ func StartClient() {
 func connectServer() {
 	opts := grpc.WithInsecure()
 	var err error
-	cc, err = grpc.Dial("localhost:9090", opts)
+	cc, err = grpc.Dial("bookstore:9090", opts)
 	if err != nil {
 		fmt.Println("Error while connection to the server", err.Error())
 		panic(err)

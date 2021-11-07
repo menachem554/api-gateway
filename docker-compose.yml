@@ -1,0 +1,30 @@
+version: '3'
+services: 
+  api-gateway:
+    image: apigateway:latest
+    container_name: api-gateway
+    restart: always
+    build: .
+    ports: 
+      - "9091:9091"
+    depends_on:
+      - bookstore
+      - mongo  
+    volumes: 
+      - .:/go/src/github.com/menachem554/api-geteway  
+ 
+  bookstore:
+    image: bookstore:latest
+    restart: always
+    ports: 
+      - "9090:9090"
+    external_links:
+      - mongo
+    volumes: 
+      - .:/go/src/github.com/menachem554/bookstore/main.go 
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+       - '27017:27017'
