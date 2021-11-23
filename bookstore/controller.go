@@ -22,12 +22,7 @@ func CreateBook(c *gin.Context) {
 	}
 
 	// Convert to grpc
-	book1 := &pb.Book{
-		BookID:   book.BookID,
-		BookName: book.BookName,
-		Category:    book.Category,
-		Author:   book.Author,
-	}
+	book1 := &entity.PostBook{}
 
 	// Send the request to grpc server
 	res, err := C.PostBook(context.Background(), &pb.PostBookReq{Book: book1})
@@ -57,7 +52,7 @@ func GetBook(c *gin.Context) {
 // UpdateBook : To Update the book of the given ID
 func UpdateBook(c *gin.Context) {
 	bookId := c.Param("id")
-	book := PostBook{}
+	book := &entity.PostBook{}
 
 	err := c.ShouldBindJSON(&book)
 	if err != nil {
