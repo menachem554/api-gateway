@@ -14,7 +14,7 @@ import (
 // CreateBook : To create the new book
 func CreateBook(c *gin.Context) {
 	// Get the request as json
-	book := entity.PostBook{}
+	book := PostBook{}
 	err := c.ShouldBindJSON(&book)
 
 	if err != nil {
@@ -25,7 +25,7 @@ func CreateBook(c *gin.Context) {
 	book1 := &pb.Book{
 		BookID:   book.BookID,
 		BookName: book.BookName,
-		Title:    book.Title,
+		Category:    book.Category,
 		Author:   book.Author,
 	}
 
@@ -57,7 +57,7 @@ func GetBook(c *gin.Context) {
 // UpdateBook : To Update the book of the given ID
 func UpdateBook(c *gin.Context) {
 	bookId := c.Param("id")
-	book := entity.PostBook{}
+	book := PostBook{}
 
 	err := c.ShouldBindJSON(&book)
 	if err != nil {
@@ -67,7 +67,7 @@ func UpdateBook(c *gin.Context) {
 	book1 := &pb.Book{
 		BookID:   bookId,
 		BookName: book.BookName,
-		Title:    book.Title,
+		Category:    book.Category,
 		Author:   book.Author,
 	}
 

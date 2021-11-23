@@ -7,6 +7,7 @@ import (
 	"os/signal"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	pb "github.com/menachem554/Bookstore/proto"
 	"google.golang.org/grpc"
 )
@@ -21,6 +22,14 @@ var (
 
 // StartClient : To start the client service
 func StartClient() {
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "PUT", "DELETE", "POST"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowHeaders:     []string{"Content-Type"},
+		AllowCredentials: true,
+		MaxAge:           0,
+	}))
 	Router()
 	connectServer()
 	go func() {
