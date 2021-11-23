@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/menachem554/api-gateway/bookstore/entity.go"
+	"github.com/menachem554/api-geteway/bookstore/entity.go"
 	pb "github.com/menachem554/Bookstore/proto"
 )
 
