@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	pb "github.com/menachem554/Bookstore/proto"
 	"google.golang.org/grpc"
 )
@@ -51,18 +51,19 @@ func StartClient() {
 	cc.Close()
 
 }
+
 // connect to grpc server
 func connectServer() {
 	opts := grpc.WithInsecure()
 	var err error
-	cc, err = grpc.Dial("bookstore:9090", opts)
+	cc, err = grpc.Dial("localhost:9090", opts)
 	if err != nil {
 		fmt.Println("Error while connection to the server", err.Error())
 		panic(err)
 	} else {
 		fmt.Println("connect to grpc server localhost:9090")
 	}
-	
+
 	C = pb.NewBookstoreClient(cc)
 	fmt.Println("Connection to Server is successfull")
 }

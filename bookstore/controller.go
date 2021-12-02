@@ -8,14 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 
 	pb "github.com/menachem554/Bookstore/proto"
-	entity "github.com/menachem554/api-gateway/bookstore/entity.go"
-
 )
 
 // CreateBook : To create the new book
 func CreateBook(c *gin.Context) {
 	// Get the request as json
-	book := PostBook{}
+	book := &PostBook{}
 	err := c.ShouldBindJSON(&book)
 
 	if err != nil {
@@ -23,7 +21,12 @@ func CreateBook(c *gin.Context) {
 	}
 
 	// Convert to grpc
-	book1 := &entity.PostBook{}
+	book1 := &pb.Book{
+		BookID:   book.BookID,
+		BookName: book.BookName,
+		Category: book.Category,
+		Author:   book.Author,
+	}
 
 	// Send the request to grpc server
 	res, err := C.PostBook(context.Background(), &pb.BookRequest{Book: book1})
@@ -53,7 +56,7 @@ func GetBook(c *gin.Context) {
 // UpdateBook : To Update the book of the given ID
 func UpdateBook(c *gin.Context) {
 	bookId := c.Param("id")
-	book := &entity.PostBook{}
+	book := &PostBook{}
 
 	err := c.ShouldBindJSON(&book)
 	if err != nil {
@@ -63,7 +66,7 @@ func UpdateBook(c *gin.Context) {
 	book1 := &pb.Book{
 		BookID:   bookId,
 		BookName: book.BookName,
-		Category:    book.Category,
+		Category: book.Category,
 		Author:   book.Author,
 	}
 
@@ -94,4 +97,17 @@ func DeleteBook(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"Success": fmt.Sprint(res.Deleted),
 	})
+}
+
+func GetAllBook(c *gin.Context) {
+	var request = &pb.GetAllReq{}
+	res, err := C.GetAllBooks(c, request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
